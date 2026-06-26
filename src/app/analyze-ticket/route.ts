@@ -24,8 +24,8 @@ const BodySchema = z.object({
     ).optional()
 })
 
-const CaseTypeEnum = z.enum(['billing', 'account_access', 'technical_issue', 'fraud_report']);
-const DepartmentEnum = z.enum(['billing_support', 'it_security', 'customer_success', 'legal']);
+const CaseTypeEnum = z.enum(['wrong_transfer','payment_failed','refund_request','duplicate_payment','merchant_settlement_delay', 'agent_cash_in_issue', 'phishing_or_social_engineering','other']);
+const DepartmentEnum = z.enum(['customer_support','dispute_resolution','payments_ops','merchant_operations','agent_operations','agent_operations']);
 
 const ResponseSchema = z.object({
     ticket_id: z.string().min(1, "Ticket ID is required"),
