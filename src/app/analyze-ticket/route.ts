@@ -24,6 +24,24 @@ const BodySchema = z.object({
     ).optional()
 })
 
+const CaseTypeEnum = z.enum(['billing', 'account_access', 'technical_issue', 'fraud_report']);
+const DepartmentEnum = z.enum(['billing_support', 'it_security', 'customer_success', 'legal']);
+
+const ResponseSchema = z.object({
+    ticket_id: z.string().min(1, "Ticket ID is required"),
+    relevant_transaction_id: z.string().nullable(),
+    evidence_verdict: z.enum(['consistent', 'inconsistent', 'insufficient_data']),
+    case_type: CaseTypeEnum,
+    severity: z.enum(['low', 'medium', 'high', 'critical']),
+    department: DepartmentEnum,
+    agent_summary: z.string().min(1, "Agent summary is required"),
+    recommended_next_action: z.string().min(1, "Recommended next action is required"),
+    customer_reply: z.string().min(1, "Customer reply is required"),
+    human_review_required: z.boolean(),
+    confidence: z.number().min(0).max(1).optional(),
+    reason_codes: z.array(z.string()).optional(),
+});
+
 export async function POST(req: NextRequest) {
     const payload = await req.json()
     const payloadRes = BodySchema.safeParse(payload)
@@ -43,6 +61,10 @@ export async function POST(req: NextRequest) {
     let validatedAiResponse = null;
     try {
         validatedAiResponse = JSON.parse(aiRes)
+        const parseRes = ResponseSchema.safeParse(validatedAiResponse)
+        if(!parseRes.success){
+            return NextResponse.json(parseRes.error,{status: 500})
+        }
     } catch {
         return NextResponse.json({
             error: true,
