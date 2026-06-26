@@ -1,0 +1,1 @@
+export { aiResponse } from './generate'
