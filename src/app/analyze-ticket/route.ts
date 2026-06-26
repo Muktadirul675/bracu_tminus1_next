@@ -62,14 +62,14 @@ export async function POST(req: NextRequest) {
     try {
         validatedAiResponse = JSON.parse(aiRes)
         const parseRes = ResponseSchema.safeParse(validatedAiResponse)
-        if(!parseRes.success){
-            return NextResponse.json(parseRes.error,{status: 500})
+        if (!parseRes.success) {
+            return NextResponse.json(parseRes.error, { status: 500 })
         }
     } catch {
         return NextResponse.json({
             error: true,
             message: "AN Unknown Server Side Error Occured"
-        })
+        }, { status: 500 })
     }
     return NextResponse.json(validatedAiResponse, { status: 200 })
 }
